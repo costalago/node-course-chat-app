@@ -1,5 +1,24 @@
 let socket = io();
 
+function scrollToBottom() {
+
+    let messages = jQuery('#messages');
+    let newMessages = messages.children('li:last-child');
+
+    let clientHeight = messages.prop('clientHeight');
+    let scrollTop = messages.prop('scrollTop');
+    let scrollHeight = messages.prop('scrollHeight');
+    let newMessageHeight = newMessages.innerHeight();
+    let lastMessageHeight = newMessages.prev().innerHeight();
+
+    if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);
+    }
+
+}
+
+
+
 socket.on('connect', function () {
     console.log('Connected to server');
 
@@ -14,7 +33,6 @@ socket.on('disconnect', function () {
 });
 
 socket.on('newMessage', function (message) {
-    // console.log('New message: ', message);
 
     let formattedTime = moment(message.createdAt).format('H:mm a');
     let template = jQuery('#message-template').html();
@@ -25,22 +43,8 @@ socket.on('newMessage', function (message) {
     });
 
     jQuery('#messages').append(html);
-
-    // let formattedTime = moment(message.createdAt).format('H:mm a');
-    //
-    // let li = jQuery('<li></li>');
-    // li.text(`${message.from} ${formattedTime}: ${message.text}`);
-    //
-    // jQuery('#messages').append(li);
+    scrollToBottom()
 });
-
-// socket.emit('createMessage', {
-//     from: 'jose',
-//     text: 'sending a message'
-// }, function (data) {
-//     console.log('got it', data);
-// });
-
 
 socket.on('newLocationMessage', function (message) {
 
@@ -53,16 +57,7 @@ socket.on('newLocationMessage', function (message) {
     });
 
     jQuery('#messages').append(html);
-
-    // let li = jQuery('<li></li>');
-    // let a = jQuery('<a target="_blank">My Current Location</a>');
-    //
-    // let formattedTime = moment(message.createdAt).format('H:mm a');
-    //
-    // li.text(`${message.from} ${formattedTime}: `);
-    // a.attr('href', message.url);
-    // li.append(a);
-    // jQuery('#messages').append(li);
+    scrollToBottom()
 });
 
 
