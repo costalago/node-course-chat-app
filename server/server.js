@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
     console.log('new User connected');
 
     socket.on('join', (params, callback) => {
-        if(!isRealString(params.name) || !isRealString(params.room)) {
+        if (!isRealString(params.name) || !isRealString(params.room)) {
             return callback('Name and room name are required!')
         }
 
@@ -45,29 +45,35 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createMessage', (message, callback) => {
-        console.log('User has created an message', message);
+        let user = users.get(socket.id);
 
-        io.emit('newMessage', generateMessage(message.from, message.text));
+        if (user && isRealString(message.text)) {
+            io.emit('newMessage', generateMessage(user.name, message.text));
+        }
 
         callback();
     });
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+
+        let user = users.get(socket.id);
+
+        if (user) {
+            io.emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
     });
 
     socket.on('disconnect', () => {
         console.log('User was disconnected to server');
 
         let user = users.remove(socket.id);
-        if(user) {
+        if (user) {
             io.to(user.room).emit('updateUserList', users.getList(user.room));
             io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left the room`));
         }
     });
 
 });
-
 
 
 server.listen(port, () => {
