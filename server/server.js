@@ -31,11 +31,30 @@ io.on('connection', (socket) => {
     socket.on('createMessage', (message) => {
         console.log('User has created an message', message);
 
+        socket.emit('newMessage', {
+            from: "admin",
+            text: 'Welcome',
+            createdAt: new Date().getTime()
+        });
+
+        socket.broadcast.emit('newMessage', {
+            from: 'Admin',
+            text: 'New user logged',
+            createdAt: new Date().getTime()
+        });
+
         io.emit('newMessage', {
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()
         });
+
+        // to send to the other users
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
 
     socket.on('disconnect', () => {
