@@ -22,14 +22,14 @@ io.on('connection', (socket) => {
     console.log('new User connected');
 
 
-    socket.emit('newEmail', {
-        from: 'pepe@gmail.com',
-        text: 'sending an email',
+    socket.emit('newMessage', {
+        from: 'pepe',
+        text: 'sending an message',
         createdAt: new Date().getTime()
     });
 
-    socket.on('createEmail', (newEmail) => {
-        console.log('User has created an email', newEmail);
+    socket.on('createMessage', (message) => {
+        console.log('User has created an message', message);
     });
 
     socket.on('disconnect', () => {
