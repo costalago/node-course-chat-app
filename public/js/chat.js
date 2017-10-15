@@ -17,15 +17,8 @@ function scrollToBottom() {
 
 }
 
-
-
 socket.on('connect', function () {
     console.log('Connected to server');
-
-    // socket.emit('createMessage', {
-    //     from: 'jose',
-    //     text: 'sending a message'
-    // });
 });
 
 socket.on('disconnect', function () {
